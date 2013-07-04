@@ -7,15 +7,13 @@ end
 % A: the feature
 [m,n] = size(A);
 
-global JP_MAX_HIGH = 5;	% the real high + 1
-%global JP_GINIS = zeros(n,1);
+global JP_MAX_HIGH;	% the real high = MAX_HIGH - 1
+global JP_T;
 
-% get GINI
-%JP_GINIS = GINI( JP_GINIS, A, L );
-%[minGINI, minF] = min(GNIS)
+JP_MAX_HIGH = 2;
+JP_T = [];
 
 % Build tree
-T = zeros(1,2^JP_MAX_HIGH);
-T = decisionTree(T, L, A, 1, 1);
+decisionTree(L, A, 1, 1);
 	
 toc;
