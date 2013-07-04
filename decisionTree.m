@@ -1,7 +1,7 @@
 function T = decisionTree( T, L, A, deepth, rootIdx )
 
 global JP_MAX_HIGH;
-global JP_GINIS;
+%global JP_GINIS;
 
 if deepth > JP_MAX_HIGH
 	return;
@@ -10,12 +10,26 @@ elseif  length(L) == 0
 elseif mean(L) == L(1)
 	return;
 else
-	% tree
-	[minGINI, minF] = min(JP_GINIS);	
+	% get the optimal feature
+	ginis = GINI( L, A );
+	while 1
+		tag = 1;
+		[minGINI, minF] = min(ginis);
+		for i = 1:length(T)
+			if T(i) == minF
+				ginis(minF) = 1e8;
+				tag = 0;
+				break;
+			end
+		end
+		if tag == 1
+			break;
+		end
+	end
 	T(rootIdx) = minF;
-	[m,n] = size(A);
 
 	% separate the D (L&A)
+	[m,n] = size(A);
 	tmpV1 = [];
 	tmpV2 = [];
 	tmpN1 = 0;
@@ -54,7 +68,7 @@ else
 	size(L2)
 
 	% recursion
-	JP_GINIS(minF) = 1e8;
+	ginis(minF) = 1e8;
 	decisionTree( T, L1, A1, deepth+1, 2*rootIdx );
 	decisionTree( T, L2, A2, deepth+1, 2*rootIdx+1 );
 
