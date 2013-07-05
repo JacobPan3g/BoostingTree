@@ -1,14 +1,17 @@
-function decisionTree( L, A, deepth, rootIdx )
+function isLeaf = decisionTree( L, A, deepth, rootIdx )
 
 global JP_MAX_HIGH;
 global JP_T;
+global JP_LEAF;
+
+isLeaf = 0;
 
 if deepth > JP_MAX_HIGH
-	return;
+	isLeaf = 1;
 elseif  length(L) == 0
-	return;
+	isLeaf = 1;
 elseif mean(L) == L(1)
-	return;
+	isLeaf = 1;
 else
 	% get the optimal feature
 	ginis = GINI( L, A );
@@ -44,10 +47,10 @@ else
 		end		
 	end
 
-	rootIdx
-	minF
-	tmpN1
-	tmpN2
+	%rootIdx
+	%minF
+	%tmpN1
+	%tmpN2
 
 	if tmpN1 == 0
 		L1 = [];
@@ -64,14 +67,25 @@ else
 		A2 = A(tmpV2,:);
 	end
 
-	size(L1)
-	size(L2)
+	%size(L1)
+	%size(L2)
 
 	% recursion
 	ginis(minF) = 1e8;
-	decisionTree( L1, A1, deepth+1, 2*rootIdx );
-	decisionTree( L2, A2, deepth+1, 2*rootIdx+1 );
+	isLeaf1 = decisionTree( L1, A1, deepth+1, 2*rootIdx );
+	isLeaf2 = decisionTree( L2, A2, deepth+1, 2*rootIdx+1 );
 
+	% is leaf
+	if isLeaf1 & isLeaf2 == 1
+		[idx, tmp] = size(JP_LEAF);
+		JP_LEAF(idx+1, 1) = rootIdx;
+		% compute the label
+		if mean(L) >= 0
+			JP_LEAF(idx+1, 2) = 1;
+		else
+			JP_LEAF(idx+1, 2) = -1;
+		end
+	end
 end
 
 end

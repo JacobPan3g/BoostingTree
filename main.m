@@ -9,11 +9,15 @@ end
 
 global JP_MAX_HIGH;	% the real high = MAX_HIGH - 1
 global JP_T;
+global JP_LEAF;
 
-JP_MAX_HIGH = 2;
+JP_MAX_HIGH = 5;
 JP_T = [];
+JP_LEAF = [];
 
 % Build tree
 decisionTree(L, A, 1, 1);
+
+JP_LEAF
 	
 toc;
