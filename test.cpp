@@ -7,13 +7,13 @@
 
 #include <iostream>
 #include <vector>
-#include "csv.cpp"
+#include "CsvData.h"
 using namespace std;
 
 int main()
 {
 	//vector< vector<double> > res;
-	CsvData data = CsvData("input.txt");
+	CsvData data = CsvData("smallData.csv");
 	cout << data.size[0] << " " << data.size[1] << endl;
 	data.disp();
 	return 0;
