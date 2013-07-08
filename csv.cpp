@@ -13,6 +13,23 @@
 #include <vector>
 using namespace std;
 
+class CsvData
+{
+public:
+	CsvData( string filename );
+	vector< vector<double> > csvread( string filename );
+	void disp();
+
+	int size[2];
+	vector< vector<double> > data; 
+};
+
+CsvData::CsvData( string filename )
+{
+	this->data = this->csvread( filename );
+	size[0] = data.size();
+	size[1] = data[0].size();
+}
 
 
 /*
@@ -22,7 +39,7 @@ using namespace std;
  * 2. split by ','
  * 3. transform char[] to num
  */
-vector< vector<double> > csvread( string filename )
+vector< vector<double> > CsvData::csvread( string filename )
 {
 	string line;
 	ifstream fobj( filename.c_str() );
@@ -59,7 +76,14 @@ vector< vector<double> > csvread( string filename )
 	return res;
 }
 
-//void disp
+void CsvData::disp()
+{
+	for ( int i = 0; i < size[0]; i++ )
+		for ( int j = 0; j < size[1]; j++ )
+			cout << this->data[i][j] << endl;	
+}
+
+
 
 /*
 int main()

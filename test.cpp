@@ -12,8 +12,9 @@ using namespace std;
 
 int main()
 {
-	vector< vector<double> > res;
-	res = csvread("input.txt");
-	cout << res.size() << endl << res[0].size() << endl;
+	//vector< vector<double> > res;
+	CsvData data = CsvData("input.txt");
+	cout << data.size[0] << " " << data.size[1] << endl;
+	data.disp();
 	return 0;
 }
