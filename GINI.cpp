@@ -5,15 +5,13 @@
 	> Created Time: Mon 08 Jul 2013 01:36:58 PM CST
  ************************************************************************/
 
-#include <iostream>
-#include <vector>
-#include "CsvData.h"
+#include "CsvData.cpp"
 using namespace std;
 
 vector<double> GINI( const CsvData &D, const vector<int> &r, int m, const vector<int> &c )
 {
-	vector<double> ginis(D.n-1);
-	for ( int i = 1; i < D.n; i++ )		// the feature from 1 to n
+	vector<double> ginis(D.n);
+	for ( int i = 0; i < D.n; i++ )		// the feature from 1 to n
 	{
 		if ( !c[i] )
 			continue;
@@ -23,25 +21,25 @@ vector<double> GINI( const CsvData &D, const vector<int> &r, int m, const vector
 		int cNum2 = 0;
 		for ( int j = 0; j < D.m; j++ )
 		{
-			if ( !r[i] )
+			if ( !r[j] )
 				continue;
 
-			if ( D.data[j][i] == 1 )
+			if ( D.A[j][i] == 1 )
 			{
 				dNum++;
-				if ( D.data[j][0] == 1 )
+				if ( D.L[j] == 1 )
 					cNum1++;
 			}
 			else
 			{
-				if ( D.data[j][0] == 1 )
+				if ( D.L[j] == 1 )
 					cNum2++;
 			}
 		}
 		double P = dNum/(m+1e-8);
 		double p1 = cNum1/(dNum+1e-8);
 		double p2 = cNum2/(m-dNum+1e-8);
-		ginis[i-1] = P*(2*p1*(1-p1)) + (1-P)*(2*p2*(1-p2));
+		ginis[i] = P*(2*p1*(1-p1)) + (1-P)*(2*p2*(1-p2));
 	}
 	return ginis;
 }

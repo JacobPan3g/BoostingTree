@@ -5,13 +5,12 @@
 	> Created Time: Sun 07 Jul 2013 10:57:34 AM CST
  ************************************************************************/
 
-#include <iostream>
 #include <queue>
 #include <cmath>
 #include "GINI.cpp"
 using namespace std;
 
-#define MAX_HIGH 2
+#define MAX_HIGH 4		// 6 for bound
 
 class Node			// be a class cause it have to free some spaces
 {
@@ -77,12 +76,22 @@ void BinaryTree::bulidTree( const CsvData &D )
 */
 		// get the optimal feature
 		vector<double> ginis = GINI( D, node->cases, node->cnum, this->features );
-		vector<double> tmp = min( ginis );
+		vector<double> tmp = min( ginis, this->features );
 		double minGINI = tmp[0];
-		int minF = (int)tmp[1];
+		int minF = (int)tmp[1];		// gini start at first feature
 		/// tag and asign
 		this->features[minF] = 0;
 		node->fIdx = minF;
+
+		// is all features used
+		bool all = true;
+		for ( int i = 0; i < this->features.size(); i++ )
+		{
+			if ( this->features[i] != 0 )
+				all = false;
+		}
+		if ( all )
+			break;
 		
 		// just for test the distiction between MATLAB and C++ 
 		if ( node->high >= MAX_HIGH )
@@ -96,7 +105,7 @@ void BinaryTree::bulidTree( const CsvData &D )
 				if ( node->cases[i] )
 				{
 					//cout << D.data[i][0] << " ";
-					sum += D.data[i][0];
+					sum += D.L[i];
 				}
 			}
 			//cout << endl;
@@ -118,7 +127,7 @@ void BinaryTree::bulidTree( const CsvData &D )
 		
 		for ( int i = 0; i < D.m; i++ )
 		{
-			if ( D.data[i][node->fIdx] == 1 )
+			if ( D.A[i][node->fIdx] == 1 )
 			{
 				tmpN1++;
 				rows1[i] = 1;

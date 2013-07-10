@@ -1,12 +1,24 @@
 #include <iostream>
 #include <string>
+#include <vector>
 #include <cmath>
 using namespace std;
 
 int main()
 {
-	//string s = "111,11";
-	//int d = s.find(".");
-	cout << pow(2,3) << endl;
+	vector<int> v;
+	v.push_back( 0 );
+	v.push_back( 1 );
+	v.push_back( 2 );
+	v.push_back( 3 );
+	v.push_back( 4 );
+	v.push_back( 5 );
+
+	v.erase( v.begin() + 2 );
+
+	for ( int i = 0; i < v.size(); i++ )
+		cout << v[i] << " ";
+	cout << endl;
+
 	return 0;
 }

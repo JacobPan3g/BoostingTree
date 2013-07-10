@@ -12,13 +12,16 @@
 using namespace std;
 
 template <class T>
-vector<T> min( const vector<T> &ginis )
+vector<T> min( const vector<T> &ginis, vector<int> tag=vector<int>() )
 {	
+	if ( tag.size() == 0 )
+		tag = vector<int>( ginis.size(), 1 );
+
 	vector<T> res(2, 0);	// idx 1 for min, idx 2 for idx
 	res[0] = 1e8;
 
 	for ( int i = 0; i < ginis.size(); i++ )
-		if ( ginis[i] < res[0] )
+		if ( tag[i] == 1 && ginis[i] < res[0] )
 		{
 			res[0] = ginis[i];
 			res[1] = i;
