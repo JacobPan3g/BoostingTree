@@ -1,0 +1,6 @@
+1.	Empty Loop: 1e8 times, take 22.5s
+
+2.	The decision tree bulid process:(GINI, matlab ignore the data-load time)
+	High	1		4
+	MATLAB	10.6s	21.68s
+	C++		0.04s	0.15s
