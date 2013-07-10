@@ -10,7 +10,7 @@
 #include "GINI.cpp"
 using namespace std;
 
-#define MAX_HIGH 4		// 6 for bound
+#define MAX_HIGH 9
 
 class Node			// be a class cause it have to free some spaces
 {
@@ -47,6 +47,7 @@ public:
 
 private:
 	void bulidTree( const CsvData &D );	
+	void estimateLabel( const vector<double> &L, Node *node );
 };
 
 BinaryTree::BinaryTree( const CsvData &D )
@@ -68,12 +69,32 @@ void BinaryTree::bulidTree( const CsvData &D )
 		Node *node = q.front();
 		q.pop();
 
-/*		if ( node->high >= MAX_HIGH )
+		// end 1
+		if ( node->high >= MAX_HIGH )
 		{
-			leaf.push_back( node );		// a leaf needn't find minF
+			this->leaf.push_back( node );	// a leaf needn't find minF
+			this->estimateLabel( D.L, node );
 			continue;
 		}
-*/
+		// end 2
+		/// is all features used
+		if ( isAll( this->features, 0 ) )
+		{
+			this->leaf.push_back( node );
+			this->estimateLabel( D.L, node );
+			continue;
+		}
+		// end 3
+		/// already the same class
+		if ( isAllSame( D.L, node->cases ) )
+		{
+			node->fIdx = -1;
+			this->leaf.push_back( node );
+			this->estimateLabel( D.L, node );
+			continue;
+		}
+		
+
 		// get the optimal feature
 		vector<double> ginis = GINI( D, node->cases, node->cnum, this->features );
 		vector<double> tmp = min( ginis, this->features );
@@ -83,42 +104,6 @@ void BinaryTree::bulidTree( const CsvData &D )
 		this->features[minF] = 0;
 		node->fIdx = minF;
 
-		// is all features used
-		bool all = true;
-		for ( int i = 0; i < this->features.size(); i++ )
-		{
-			if ( this->features[i] != 0 )
-				all = false;
-		}
-		if ( all )
-			break;
-		
-		// just for test the distiction between MATLAB and C++ 
-		if ( node->high >= MAX_HIGH )
-		{
-			this->leaf.push_back( node );	// a leaf needn't find minF
-			
-			// get the mean
-			int sum = 0;
-			for ( int i = 0; i < D.m; i++ )
-			{
-				if ( node->cases[i] )
-				{
-					//cout << D.data[i][0] << " ";
-					sum += D.L[i];
-				}
-			}
-			//cout << endl;
-			double mean = (double)sum/node->cnum;
-			// estimate the label
-			if ( mean >= 0 )
-				this->labels.push_back(1);
-			else
-				this->labels.push_back(-1);
-
-			continue;
-		}
-
 		// separate the data by minF( need to know the minF )
 		vector<int> rows1( D.m, 0 );
 		vector<int> rows2( D.m, 0 );
@@ -127,6 +112,9 @@ void BinaryTree::bulidTree( const CsvData &D )
 		
 		for ( int i = 0; i < D.m; i++ )
 		{
+			if ( !node->cases[i] )
+				continue;
+
 			if ( D.A[i][node->fIdx] == 1 )
 			{
 				tmpN1++;
@@ -139,6 +127,13 @@ void BinaryTree::bulidTree( const CsvData &D )
 			}
 
 		}
+
+		/*
+		if ( tmpN1 == 0 )
+			cout << "tmpN1==0" << endl;
+		if ( tmpN2 == 0 )
+			cout << "tmpN2==0" << endl;
+		*/
 
 		int high = node->high + 1;
 		node->left = new Node( rows1, tmpN1, high );
@@ -182,6 +177,27 @@ void BinaryTree::disp()
 	cout << endl;
 }
 
+void BinaryTree::estimateLabel( const vector<double> &L, Node *node )
+{
+	// get the mean
+	int sum = 0;
+	for ( int i = 0; i < L.size(); i++ )
+	{
+		if ( node->cases[i] )
+		{
+			//cout << D.data[i][0] << " ";
+			sum += L[i];
+		}
+	}
+	//cout << endl;
+	double mean = (double)sum/node->cnum;
+	// estimate the label
+	if ( mean >= 0 )
+		this->labels.push_back(1);
+	else
+		this->labels.push_back(-1);
+}
+
 #include <ctime>
 int main()
 {
@@ -192,9 +208,13 @@ int main()
 	BinaryTree tree(D);
 	//cout << tree.leaf.size() << endl;
 	tree.disp();
+	cout << "cnum\thigh\tlabel\t" << endl;
 	for ( int i = 0; i < tree.leaf.size(); i++ )
-		cout << tree.leaf[i]->fIdx << " " << tree.labels[i] << endl;
-	
+		cout << tree.leaf[i]->cnum << "\t" 
+			 << tree.leaf[i]->high << "\t" 
+			 << tree.labels[i] << endl;
+	cout << tree.leaf.size() << endl;
+
 	toc = clock();
 	double tol = (double)(toc-tic)/CLOCKS_PER_SEC;
 	cout << "Time: " << tol << " s" << endl;

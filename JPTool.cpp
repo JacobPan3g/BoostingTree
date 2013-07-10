@@ -48,6 +48,50 @@ vector<T> split( string str, string pattern )
 	return res;
 }
 
+template <class T>
+bool isAll( const vector<T> &v, T value, vector<int> tag=vector<int>() )
+{
+	if ( tag.size() == 0 )
+		tag = vector<int>( v.size(), 1 );
+	
+	bool all = true;
+	for ( int i = 0; i < v.size(); i++ )
+	{
+		if ( tag[i] && v[i] != value )
+			all = false;
+	}
+	return all;
+}
+
+// just keep
+template <class T>
+bool isAllSame( const vector<T> &v, vector<int> tag=vector<int>() )
+{
+	if ( tag.size() == 0 )
+		tag = vector<int>( v.size(), 1 );
+	
+	bool allSame = true;
+	bool isEmpty = true;
+	T tmp;
+	for ( int i = 0; i < v.size(); i++ )
+	{
+		if ( tag[i] )
+		{
+			tmp = v[i];
+			isEmpty = false;
+			break;
+		}
+	}
+
+	if ( !isEmpty )
+		for ( int i = 0; i < v.size(); i++ )
+			if ( tag[i] && v[i] != tmp )
+				allSame = false;
+
+	return allSame;
+
+}
+
 /*
 int main()
 {
@@ -66,7 +110,13 @@ int main()
 	vector<double> res = split<double>(s, ",");
 	for ( int i = 0; i < res.size(); i++ )
 		cout << res[i] << endl;
-
+	
+	//isAll() isAllSame()
+	vector<int> v(3, 1);
+	v.push_back(2);
+	if ( isAllSame(v) )
+		cout << "YES" << endl;
+	
 	return 0;
 }
 */
