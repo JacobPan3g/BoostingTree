@@ -1,17 +1,17 @@
 /*************************************************************************
 	> File Name: GINI.cpp
-	> Author: ma6174
-	> Mail: ma6174@163.com 
+	> Author: Jacob Pan
+	> Mail: zhenjian3g@gmail.com 
 	> Created Time: Mon 08 Jul 2013 01:36:58 PM CST
  ************************************************************************/
 
 #include "CsvData.cpp"
 using namespace std;
 
-vector<double> GINI( const CsvData &D, const vector<int> &r, int m, const vector<int> &c )
+vector<double> measure( const CsvData &D, const vector<int> &r, int m, const vector<int> &c )
 {
 	vector<double> ginis(D.n);
-	for ( int i = 0; i < D.n; i++ )		// the feature from 1 to n
+	for ( int i = 0; i < D.n; i++ )
 	{
 		if ( !c[i] )
 			continue;
@@ -44,24 +44,29 @@ vector<double> GINI( const CsvData &D, const vector<int> &r, int m, const vector
 	return ginis;
 }
 
-
-
-
-/*
-int discretize( double d )
+double estimateLabel( const vector<double> &L, vector<int> tag )
 {
-	int res = 0;	// 0 <= d <= 0.2
-	if ( 0.2 < d && d <= 0.4 )
-		res = 1;
-	else if ( 0.4 < d && d <= 0.6 )
-		res = 2;
-	else if ( 0.6 < d && d <= 0.8 )
-		res = 3;
-	else			// 0.8 < d <= 1
-		res = 4;
+	// get the mean
+	int sum = 0;
+	int num = 0;
+	for ( int i = 0; i < L.size(); i++ )
+	{
+		if ( tag[i] )
+		{
+			sum += L[i];
+			num++;
+		}
+	}
 
-	return res;
-}*/
+	double mean = (double)sum/num;
+	// estimate the label
+	if ( mean >= 0 )
+		return 1;
+	else
+		return -1;
+}
+
+
 
 /*
 int main()
